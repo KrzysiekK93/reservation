@@ -5,7 +5,6 @@ function ShoppingBasket(props) {
 
     useEffect(()=>{
         setData(props.data);
-        console.log(data);
     }, [props.data])
 
     return (
@@ -16,10 +15,10 @@ function ShoppingBasket(props) {
                         <h3>{item.day}</h3>
                         <ul>
                             {item.Movies && item.Movies.map((el, index) => {
-                                if (el.ticketsNumber > 0) {
+                                if (el.value > 0) {
                                     return (
                                         <li key={index}>
-                                            <strong>{el.name}</strong> -- <span>number of tickets: {el.ticketsNumber}</span>
+                                            <strong>{el.name}</strong> -- <span>number of tickets: {el.value}</span>
                                         </li>
                                         )
                                 } else {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
@@ -46,8 +46,14 @@ const useStyles = makeStyles(theme =>
 );
 
 export default function Ticket(props) {
+    const [data, setData] = useState();
+
+    useEffect(() => {
+       setData(props.data)
+    }, [data]);
+
     const classes = useStyles();
-    const renderData = () => props.data.Movies.map(item => {
+    const renderData = () => data.Movies.map(item => {
         return (
             <div className={classes.wrapper}>
                 <div className={classes.row}>
@@ -71,24 +77,27 @@ export default function Ticket(props) {
                         }}
                         margin="normal"
                         variant="outlined"
-                        onChange={(e) => getValue(e)}
+                        onChange={(e) => handleChange(e)}
                     />
                 </div>
             </div>
         )}
     )
 
-    function getValue(e) {
-        const data = {
-            id: parseFloat(e.target.id), 
-            value: parseFloat(e.target.value)
-        }
-        props.getValue(data);
+    const handleChange = (e) => {
+        const d = JSON.parse(JSON.stringify(data));
+        d.Movies.map(item => {
+            if(item.id == e.target.id) {
+                item.value = parseFloat(e.target.value);
+            }
+        })
+        setData(d);
+        props.getValue(d)
     }
 
     return (
         <div>
-            {renderData()}
+            {data && renderData()}
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tabs, AppBar, Tab, Typography, Box, Button} from '@material-ui/core';
 import Ticket from './ticket/Ticket';
@@ -15,41 +15,32 @@ const useStyles = makeStyles(theme => ({
 
 export default function Tickets(props) {
     const [value, setValue] = useState(0);
-    const [sValue, setSValue] = useState();
+    const [data, setData] = useState();
+    const [basketData, setBasketData] = useState([]);
     const classes = useStyles();
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    function getSelected() {
-        const pData = setPreparedDataFn();
-        pData.map(el => {
-            el.Movies.map(item => {
-                console.log(item);
-                console.log(sValue);
-                if (item.id === sValue.id ) {
-                    item.ticketsNumber = sValue.value
-                }
+    function getValue(items) {
+        if (basketData.length === 0) {
+            setBasketData([{...items}])
+        } else {
+            basketData.map(el => {
+                el.Movies.map(item => {
+                    if (item.id == items.Movies[0].id) {
+                        return item.value = items.Movies[0].value
+                    } else {
+                        setBasketData([{ ...basketData, ...items}])  
+                    }
+                })
             })
-        })
-        props.getSelected(pData);
+        }
     }
 
-    function setPreparedDataFn() {
-        const d = JSON.parse(JSON.stringify(props.data));
-        d.map(el => {
-            el.Movies.map(item => {
-                item.ticketsNumber = 0;
-            })
-        })
-        return d;
-    }
-
-    function getValue(item) {
-        console.log("item", item)
-        console.log("sValue", sValue)
-        // setSValue(item);
-    }
+    useEffect(() => {
+        setData(props.data);
+    }, [data])
 
     
     function TabPanel(props) {
@@ -75,7 +66,18 @@ export default function Tickets(props) {
         };
     }
 
-    var renderData = () => props.data.map((item, index) => {
+    function passData() {
+        data.map(el => {
+            el.Movies.map(item => {
+                if (item.id === basketData[0].Movies[0].id) {
+                    return item.value = basketData[0].Movies[0].value;
+                }
+            })
+        })
+        props.getSelected(data, basketData);
+    }
+
+    var renderData = () => data.map((item, index) => {
         return (
             <TabPanel value={value} index={index} key={index}>
                 <Ticket data={item} getValue={getValue}/>
@@ -83,12 +85,11 @@ export default function Tickets(props) {
         )}
     );
 
-    var renderTabs = () => props.data.map((item, index) => {
+    var renderTabs = () => data.map((item, index) => {
         return (
             <Tab key={index} label={item.day} {...a11yProps(index)} />
         )
     });
-
 
     return (
         <div>
@@ -100,11 +101,11 @@ export default function Tickets(props) {
                         scrollButtons="auto"
                         aria-label="scrollable auto tabs example"
                     >
-                        {renderTabs()}
+                        {data && renderTabs()}
                     </Tabs>
                 </AppBar>
-                {renderData()}
-                <Button variant="contained" color="primary" className={classes.button} onClick={() => getSelected()}>
+                {data && renderData()}
+                <Button variant="contained" color="primary" className={classes.button} onClick={() => passData()}>
                     Reserve
                 </Button>
             </div>

@@ -33,14 +33,27 @@ const Content = (props) => {
         setOpen(false);
     };
 
+    const handleOrder = () => {
+        setSelectedData(null);
+        setOpen(false);
+    };
+
     useEffect(() => { 
         setIsLoaded(props.data.isLoaded);
         setData(props.data.data);
-    })
+        
+    }, [props.data.data])
 
-    const getSelected = (d) => {
-        console.log('data from content', d)
-        setSelectedData(d);
+    const getSelected = (d, s) => {
+        d.map(el => {
+            el.Movies.map(item => {
+                if (item.id === s[0].Movies[0].id) {
+                    return item.ticketsNumber = s[0].Movies[0].ticketsNumber - s[0].Movies[0].value;
+                }
+            })
+        })
+        setData(d);
+        setSelectedData(s)
     }
     
     if (isLoaded) {
@@ -69,7 +82,7 @@ const Content = (props) => {
                         <Button onClick={handleClose} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={handleClose} color="primary">
+                        <Button onClick={handleOrder} color="primary">
                             Order
                         </Button>
                     </DialogActions>

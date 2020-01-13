@@ -20,7 +20,6 @@ firebase.initializeApp(config);
 const db = firebase.firestore();
 const useStyles = makeStyles(theme =>
   createStyles({
-    
     input: {
       display: 'none',
     },
